@@ -551,6 +551,9 @@ private:
 
 	QPointer<QObject> screenshotData;
 
+	void MoveSceneItem(enum obs_order_movement movement,
+			   const QString &action_name);
+
 public slots:
 	void DeferSaveBegin();
 	void DeferSaveEnd();
@@ -856,6 +859,21 @@ public:
 	OBSWeakSource copyFilter = nullptr;
 
 	void ShowStatusBarMessage(const QString &message);
+
+	static OBSData BackupScene(obs_source_t *scene_source);
+	void CreateSceneUndoRedoAction(const QString &action_name,
+				       OBSData undo_data, OBSData redo_data);
+
+	static inline OBSData BackupScene(obs_scene_t *scene)
+	{
+		obs_source_t *source = obs_scene_get_source(scene);
+		return BackupScene(source);
+	}
+
+	void CreateFilterPasteUndoRedoAction(const QString &text,
+					     obs_source_t *source,
+					     obs_data_array_t *undo_array,
+					     obs_data_array_t *redo_array);
 
 protected:
 	virtual void closeEvent(QCloseEvent *event) override;
